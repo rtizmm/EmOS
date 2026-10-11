@@ -1,15 +1,16 @@
-import{personalize}from'./core/personalization.js?v=1.0.1';
-import{WindowManager}from'./core/window-manager.js?v=1.0.1';
-import{appIcon}from'./core/icons.js?v=1.0.1';
-import{applyPreferences,preferences,setPreference,readSetting,writeSetting}from'./core/storage.js?v=1.0.1';
-import{mount as about}from'./apps/about.js?v=1.0.1';
-import{mount as terminal}from'./apps/terminal.js?v=1.0.1';
-import{mount as notes}from'./apps/notes.js?v=1.0.1';
-import{mount as settings}from'./apps/settings.js?v=1.0.1';
-import{mount as calculator}from'./apps/calculator.js?v=1.0.1';
-import{mount as askimmm}from'./apps/askimmm.js?v=1.0.1';
-import{mount as music,launch as launchSpotify}from'./apps/music.js?v=1.0.1';
-const apps=[{id:'askimmm',title:'askimmm',mount:askimmm,width:860,height:570},{id:'music',title:'Spotify',mount:music,launch:launchSpotify,width:480,height:460},{id:'about',title:'EmOS Hakkında',label:'EmOS',mount:about,width:700,height:530},{id:'notes',title:'Notlar',mount:notes,width:690,height:530},{id:'terminal',title:'Terminal',mount:terminal,width:660,height:430},{id:'calculator',title:'Hesap Makinesi',mount:calculator,width:480,height:650},{id:'settings',title:'Ayarlar',mount:settings,width:580,height:590}];
+import{mount as arcade}from'./apps/arcade.js?v=1.1.0';
+import{personalize}from'./core/personalization.js?v=1.1.0';
+import{WindowManager}from'./core/window-manager.js?v=1.1.0';
+import{appIcon}from'./core/icons.js?v=1.1.0';
+import{applyPreferences,preferences,setPreference,readSetting,writeSetting}from'./core/storage.js?v=1.1.0';
+import{mount as about}from'./apps/about.js?v=1.1.0';
+import{mount as terminal}from'./apps/terminal.js?v=1.1.0';
+import{mount as notes}from'./apps/notes.js?v=1.1.0';
+import{mount as settings}from'./apps/settings.js?v=1.1.0';
+import{mount as calculator}from'./apps/calculator.js?v=1.1.0';
+import{mount as askimmm}from'./apps/askimmm.js?v=1.1.0';
+import{mount as music}from'./apps/music.js?v=1.1.0';
+const apps=[{id:'arcade',title:'Oyun Odası',mount:arcade,width:640,height:610},{id:'askimmm',title:'askimmm',mount:askimmm,width:860,height:570},{id:'music',title:'Spotify',mount:music,width:620,height:640},{id:'about',title:'EmOS Hakkında',label:'EmOS',mount:about,width:700,height:530},{id:'notes',title:'Notlar',mount:notes,width:690,height:530},{id:'terminal',title:'Terminal',mount:terminal,width:660,height:430},{id:'calculator',title:'Hesap Makinesi',mount:calculator,width:480,height:650},{id:'settings',title:'Ayarlar',mount:settings,width:580,height:590}];
 applyPreferences();const wm=new WindowManager(apps),$=s=>document.querySelector(s);let toastTimer;function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3500)}
 const panels=['#start-menu','#control-panel','#context-menu'];function closePanels(){panels.forEach(s=>$(s).hidden=true);$('#start-button').setAttribute('aria-expanded','false');$('#controls-button').setAttribute('aria-expanded','false')}
 function togglePanel(id){const wasHidden=$(id).hidden;closePanels();$(id).hidden=!wasHidden;if(id==='#start-menu'){$('#start-button').setAttribute('aria-expanded',String(wasHidden));if(wasHidden){$('#app-search').value='';filterApps();$('#app-search').focus()}}if(id==='#control-panel')$('#controls-button').setAttribute('aria-expanded',String(wasHidden))}

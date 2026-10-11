@@ -13,3 +13,6 @@ No in-progress implementation is required to run v1.0. Future optional work: PWA
 
 ## 1.0.1 startup fix
 All browser imports and entry assets are stamped with the same release query using `python3 scripts/stamp-release.py <new-version>`. Run this for EVERY release, even if only one module changes: cached old named exports/defaults must not mix with new modules. The startup screen now includes the actual error message and retry requests a fresh HTML URL. Existing local data is preserved.
+
+## 1.1.0
+Uploaded photo tint fixed via CSS exclusion of custom-wallpaper from preset filters. Spotify is now an iframe player, not a tab launcher; source URL comes from nazlimmm's existing playlist and can be replaced in the app. `js/apps/arcade.js` implements reaction/target games. Settings checkboxes are styled switches. Release graph stamped 1.1.0. Browser QA remains unavailable.

@@ -1,0 +1,4 @@
+import{test}from'node:test';import assert from'node:assert/strict';import{spotifyEmbed}from'../js/apps/music.js';
+const id='6NyRmMt13dUIeXdh6IEstU';
+test('Spotify links normalize without carrying query strings into the player',()=>{for(const type of ['playlist','track','album','artist','episode','show'])for(const prefix of ['', 'embed/','intl-tr/'])assert.equal(spotifyEmbed(`https://open.spotify.com/${prefix}${type}/${id}?si=abc`),`https://open.spotify.com/embed/${type}/${id}`)});
+test('unrelated, executable and unsupported links are rejected',()=>{for(const url of ['javascript:alert(1)','https://evil.test/playlist/'+id,'https://open.spotify.com.evil.test/playlist/'+id,'http://open.spotify.com/playlist/'+id,'https://name@open.spotify.com/playlist/'+id,'https://open.spotify.com/','https://open.spotify.com/search/test'])assert.throws(()=>spotifyEmbed(url))});

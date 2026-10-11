@@ -62,3 +62,9 @@ Verification: JavaScript syntax checks, local import/asset resolution and calcul
 - Startup timeout/retry, social metadata, reduced-transparency support, and Ctrl/Cmd + K to open application search.
 
 Not yet included: installable/offline PWA, cloud synchronization, task manager, JSON backup import. Spotify and sites inside askimmm require internet. No secrets or account credentials are stored in the repository.
+
+## v1.1 — Spotify room and Arcade
+
+Custom wallpapers are excluded from every preset hue filter. Settings use keyboard-accessible switches and styled sliders. Spotify uses its official embedded player; paste a playlist, track, artist, album or podcast URL. Initial playlist comes from the existing nazlimmm site. Link is saved locally; playback follows Spotify's availability/account rules. No external tab opens automatically.
+
+Oyun Odası includes a reaction test and 20-second target game, local personal records and cancellation when minimized or browser tab is hidden. No scores are uploaded.

@@ -1,12 +1,12 @@
-import{preferences,setPreference,readSetting,writeSetting,notesStore}from'../core/storage.js?v=1.0.1';
-import{calculate}from'./calculator.js?v=1.0.1';
+import{preferences,setPreference,readSetting,writeSetting,notesStore}from'../core/storage.js?v=1.1.0';
+import{calculate}from'./calculator.js?v=1.1.0';
 export function mount(root,wm){
  root.innerHTML='<div class="terminal-body"><pre class="terminal-output"></pre><form class="terminal-form"><span>emo@emos ~ ❯</span><input aria-label="Terminal komutu" autocomplete="off" spellcheck="false" autocapitalize="off"></form></div>';
  const output=root.querySelector('pre'),input=root.querySelector('input'),prompt=root.querySelector('.terminal-form span');let history=readSetting('terminalHistory',[]),cursor=history.length,cwd='~',closed=false;
  const commands=['help','clear','date','whoami','version','echo','ls','pwd','cd','open','theme','wallpaper','clock','calc','history','neofetch','cat'];
  const print=text=>{if(closed)return;output.textContent=(output.textContent+text+'\n').slice(-50000);root.firstElementChild.scrollTop=root.firstElementChild.scrollHeight};
  const updatePrompt=()=>prompt.textContent=(preferences.name||'emo')+'@emos '+cwd+' ❯';updatePrompt();
- print('EmOS Terminal 1.0\nhelp ile keşfet · Tab ile tamamla · ↑ ↓ komut geçmişi\n');
+ print('EmOS Terminal 1.1\nhelp ile keşfet · Tab ile tamamla · ↑ ↓ komut geçmişi\n');
  root.querySelector('form').onsubmit=async e=>{
   e.preventDefault();const line=input.value.trim();if(!line||input.disabled)return;history.push(line);history=history.slice(-100);writeSetting('terminalHistory',history);cursor=history.length;input.value='';print(prompt.textContent+' '+line);input.disabled=true;
   const[raw,...args]=line.split(/\s+/),cmd=raw.toLowerCase(),value=args.join(' ');
@@ -15,7 +15,7 @@ export function mount(root,wm){
    case'clear':output.textContent='';break;
    case'date':print(new Date().toLocaleString('tr-TR'));break;
    case'whoami':print((preferences.name||'emo')+' · yerel kullanıcı');break;
-   case'version':print('EmOS 1.0 · Modern Glass');break;
+   case'version':print('EmOS 1.1 · Modern Glass');break;
    case'echo':print(value);break;
    case'pwd':print('/home/'+(preferences.name||'emo')+(cwd==='~'?'':'/'+cwd));break;
    case'cd':{const target=(args[0]||'~').replace(/^~\//,'').replace(/\/$/,'');if(['..','~','/'].includes(target))cwd='~';else if(['apps','notes','askimmm'].includes(target))cwd=target;else print('Klasör bulunamadı. apps, notes, askimmm');updatePrompt();break}
@@ -27,7 +27,7 @@ export function mount(root,wm){
    case'clock':if(['on','off'].includes(value)){setPreference('clockVisible',value==='on');print('Saat '+(value==='on'?'görünür.':'gizlendi.'))}else print('clock on|off');break;
    case'calc':print(String(calculate(value)));break;
    case'history':if(value==='clear'){history=[];cursor=0;writeSetting('terminalHistory',history);print('Komut geçmişi silindi.')}else print(history.map((v,i)=>(i+1)+'  '+v).join('\n'));break;
-   case'neofetch':print('EmOS 1.0\nKullanıcı: '+(preferences.name||'emo')+'\nTema: '+preferences.theme+'\nGörünüm alanı: '+innerWidth+' × '+innerHeight+'\nAçık uygulama: '+wm.windows.size+'\nDepolama: bu tarayıcı\nÇalışma ortamı: web masaüstü');break;
+   case'neofetch':print('EmOS 1.1\nKullanıcı: '+(preferences.name||'emo')+'\nTema: '+preferences.theme+'\nGörünüm alanı: '+innerWidth+' × '+innerHeight+'\nAçık uygulama: '+wm.windows.size+'\nDepolama: bu tarayıcı\nÇalışma ortamı: web masaüstü');break;
    default:print('Komut bulunamadı: '+cmd+' · help ile başlayabilirsin.');
   }}catch(error){print('Hata: '+error.message)}finally{if(!closed){input.disabled=false;print('');if(wm.active==='terminal')input.focus()}}
  };
