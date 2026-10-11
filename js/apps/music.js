@@ -1,4 +1,4 @@
-import{readSetting,writeSetting}from'../core/storage.js?v=1.1.0';
+import{readSetting,writeSetting}from'../core/storage.js?v=1.1.1';
 export function spotifyEmbed(value){
  const url=new URL(value.trim());if(url.protocol!=='https:'||url.hostname!=='open.spotify.com'||url.username||url.password)throw Error('Spotify’ın paylaş menüsünden bir bağlantı yapıştır.');
  const match=url.pathname.match(/^\/(?:intl-[a-z-]+\/)?(?:embed\/)?(playlist|track|album|artist|episode|show)\/([a-zA-Z0-9]{22})\/?$/);if(!match)throw Error('Liste, şarkı, albüm, sanatçı veya podcast bağlantısı gerekli.');return 'https://open.spotify.com/embed/'+match[1]+'/'+match[2];

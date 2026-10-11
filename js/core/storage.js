@@ -1,7 +1,8 @@
-const defaults={theme:'dark',accent:'#b5a0ff',wallpaper:'aurora',motion:true,glass:true,name:'emo',clockVisible:true,clockSize:82,clock24:true,showDate:true,showGreeting:true,showIcons:true,rememberWindows:true,wallpaperDim:15};
+const defaults={theme:'dark',accent:'#b5a0ff',wallpaper:'askim',motion:true,glass:true,name:'emo',clockVisible:true,clockSize:82,clock24:true,showDate:true,showGreeting:true,showIcons:true,rememberWindows:true,wallpaperDim:15};
 export function readSetting(key,fallback){try{return JSON.parse(localStorage.getItem('emos:'+key))??fallback}catch{return fallback}}
 export function writeSetting(key,value){try{localStorage.setItem('emos:'+key,JSON.stringify(value));return true}catch{return false}}
 export const preferences={...defaults,...readSetting('preferences',{})};
+if(!readSetting('askimDefaultV1',false)){preferences.wallpaper='askim';writeSetting('preferences',preferences);writeSetting('askimDefaultV1',true)}
 export function applyPreferences(){document.body.dataset.theme=preferences.theme;document.body.dataset.wallpaper=preferences.wallpaper;document.body.dataset.motion=preferences.motion?'on':'off';document.body.dataset.glass=preferences.glass?'on':'off';document.body.dataset.icons=preferences.showIcons?'on':'off';document.documentElement.style.setProperty('--wallpaper-dim',preferences.wallpaperDim/100);document.documentElement.style.setProperty('--accent',preferences.accent)}
 export function setPreference(key,value){preferences[key]=value;applyPreferences();const saved=writeSetting('preferences',preferences);window.dispatchEvent(new CustomEvent('preferenceschange'));return saved}
 let database;

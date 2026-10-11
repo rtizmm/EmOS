@@ -1,5 +1,5 @@
-import{preferences,setPreference,readSetting,writeSetting,notesStore}from'../core/storage.js?v=1.1.0';
-import{calculate}from'./calculator.js?v=1.1.0';
+import{preferences,setPreference,readSetting,writeSetting,notesStore}from'../core/storage.js?v=1.1.1';
+import{calculate}from'./calculator.js?v=1.1.1';
 export function mount(root,wm){
  root.innerHTML='<div class="terminal-body"><pre class="terminal-output"></pre><form class="terminal-form"><span>emo@emos ~ ❯</span><input aria-label="Terminal komutu" autocomplete="off" spellcheck="false" autocapitalize="off"></form></div>';
  const output=root.querySelector('pre'),input=root.querySelector('input'),prompt=root.querySelector('.terminal-form span');let history=readSetting('terminalHistory',[]),cursor=history.length,cwd='~',closed=false;
