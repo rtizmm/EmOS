@@ -29,7 +29,7 @@ Desktop shortcuts open on double click, Enter/Space, or a touch tap.
 
 Serve this directory with any static HTTP server, e.g. `python3 -m http.server 8080`. Open `http://localhost:8080`. ES modules require HTTP rather than opening index.html directly.
 
-Run the calculator checks with `npm test` (Node.js, no dependencies).
+Run the calculator and window-state checks with `npm test` (Node.js, no dependencies).
 
 ## GitHub Pages
 
@@ -50,3 +50,15 @@ This is a browser desktop, not a machine operating system. No user accounts, clo
 - Desktop icons wrap, the taskbar scrolls on narrow screens, Start fits short screens, and reduced-motion preferences apply to the music animation.
 
 Verification: JavaScript syntax checks, local import/asset resolution and calculator unit tests. Browser visual/interaction QA was unavailable in the authoring environment.
+
+
+## v1.0 — your desktop
+
+- Spotify replaces local music playback: opens the official web player in a new tab, with an explicit link as popup fallback. Restoring a session never automatically opens Spotify tabs.
+- Personalization: local image upload (JPG/PNG/WebP/GIF, up to 15 MB; resized to max 2560 px and saved as a still JPEG in IndexedDB), dimming, name, clock show/hide/size/24-hour/date/caption, desktop icons and glass effect. Drag the clock or focus it and use arrow keys; position is saved relative to viewport.
+- Scientific calculator: editable expressions, right-associative powers, parentheses, factorial, square roots, logs, trigonometry, DEG/RAD, π/e/ans, implicit multiplication and session calculation history. Uses its own arithmetic parser, not Google or eval.
+- Terminal: completion, persistent command history, virtual navigation, saved-note reading, scientific calculations and theme/clock controls. `help` lists commands. No operating-system shell access.
+- Session restoration preserves window bounds, tiled/maximized and minimized states. `rememberWindows` can be disabled in Settings. Preferences and notes from prior releases are retained.
+- Startup timeout/retry, social metadata, reduced-transparency support, and Ctrl/Cmd + K to open application search.
+
+Not yet included: installable/offline PWA, cloud synchronization, task manager, JSON backup import. Spotify and sites inside askimmm require internet. No secrets or account credentials are stored in the repository.

@@ -1,10 +1,13 @@
+import{preferences,readSetting,writeSetting}from'./storage.js';
 import{icon}from'./icons.js';
 export class WindowManager{
  constructor(registry){
-  this.registry=registry;this.windows=new Map();this.active=null;this.layer=10;
+  this.registry=registry;this.windows=new Map();this.active=null;this.layer=10;this.sessionTimer=null;window.addEventListener('pagehide',()=>this.saveSession());
   window.addEventListener('resize',()=>this.windows.forEach(w=>{if(w.maximized)this.fit(w);else if(w.snapped)this.snap(w.app.id,w.snapped,false);else this.clamp(w)}));
  }
- emit(){window.dispatchEvent(new CustomEvent('windowschange'))}
+ saveSession(){if(!preferences.rememberWindows)return;writeSetting('windowSession',[...this.windows.values()].map(w=>({id:w.app.id,bounds:this.bounds(w),restore:w.restore,maximized:!!w.maximized,snapped:w.snapped||null,hidden:w.el.hidden})))}
+ restoreSession(){const saved=readSetting('windowSession',null);if(!preferences.rememberWindows||!Array.isArray(saved))return false;const valid=b=>b&&['left','top','width','height'].every(k=>typeof b[k]==='string'&&/^[-\d.]+px$/.test(b[k])&&Number.isFinite(parseFloat(b[k])));for(const item of saved.slice(0,20)){if(!item||!this.registry.some(a=>a.id===item.id)||!valid(item.bounds)||parseFloat(item.bounds.width)<=0||parseFloat(item.bounds.height)<=0)continue;this.open(item.id,{launch:false});const w=this.windows.get(item.id);if(!w)continue;Object.assign(w.el.style,item.bounds);this.clamp(w);if(item.maximized)this.maximize(item.id);else if(['left','right'].includes(item.snapped))this.snap(item.id,item.snapped);if(valid(item.restore))w.restore=item.restore;w.el.hidden=!!item.hidden}this.pickFocus();return true}
+ emit(){clearTimeout(this.sessionTimer);this.sessionTimer=setTimeout(()=>this.saveSession(),250);window.dispatchEvent(new CustomEvent('windowschange'))}
  focus(id){const w=this.windows.get(id);if(!w)return;w.el.hidden=false;if(this.active===id&&w.el.classList.contains('focused'))return;this.active=id;this.windows.forEach(x=>x.el.classList.toggle('focused',x===w));w.el.style.zIndex=++this.layer;this.emit()}
  bounds(w){return{left:w.el.style.left,top:w.el.style.top,width:w.el.style.width,height:w.el.style.height}}
  clamp(w){const width=Math.min(parseFloat(w.el.style.width),innerWidth),height=Math.min(parseFloat(w.el.style.height),innerHeight-64);Object.assign(w.el.style,{width:width+'px',height:height+'px',left:Math.max(0,Math.min(parseFloat(w.el.style.left),innerWidth-width))+'px',top:Math.max(0,Math.min(parseFloat(w.el.style.top),innerHeight-64-height))+'px'})}
@@ -17,9 +20,9 @@ export class WindowManager{
  close(id){const w=this.windows.get(id);if(!w)return;w.cancelDrag?.();w.cleanup?.();w.el.remove();this.windows.delete(id);this.pickFocus()}
  toggle(id){const w=this.windows.get(id);if(w&&!w.el.hidden&&this.active===id)this.minimize(id);else this.open(id)}
  showDesktop(){const visible=[...this.windows.values()].filter(w=>!w.el.hidden);if(visible.length){this.desktopHidden=visible.map(w=>w.app.id);visible.forEach(w=>{w.el.hidden=true;w.el.classList.remove('focused')});this.active=null;this.emit()}else{(this.desktopHidden||[]).forEach(id=>this.focus(id));this.desktopHidden=[]}}
- open(id){
+ open(id,{launch=true}={}){
   if(this.windows.has(id)){this.focus(id);return}
-  const app=this.registry.find(a=>a.id===id);if(!app)return;
+  const app=this.registry.find(a=>a.id===id);if(!app)return;if(launch)app.launch?.();
   const el=document.createElement('section');el.className='window';el.setAttribute('role','dialog');el.setAttribute('aria-label',app.title);
   const offset=this.windows.size*20,width=app.width||660,height=app.height||490;
   Object.assign(el.style,{width:Math.min(width,innerWidth-24)+'px',height:Math.min(height,innerHeight-96)+'px',left:Math.max(0,(innerWidth-width)/2+offset)+'px',top:Math.max(0,(innerHeight-64-height)/2+offset)+'px'});
@@ -36,7 +39,7 @@ export class WindowManager{
     handle.setPointerCapture(e.pointerId);e.preventDefault();
     const paint=()=>{frame=0;if(!moved)return;const dx=last.clientX-x,dy=last.clientY-y;if(resize){el.style.width=Math.min(innerWidth-rect.left,Math.max(280,rect.width+dx))+'px';el.style.height=Math.min(innerHeight-64-rect.top,Math.max(240,rect.height+dy))+'px'}else{const left=Math.max(0,Math.min(innerWidth-rect.width,rect.left+dx)),top=Math.max(0,Math.min(innerHeight-108,rect.top+dy));el.style.transform=`translate3d(${left-rect.left}px,${top-rect.top}px,0)`}};
     handle.onpointermove=ev=>{last=ev;if(Math.abs(ev.clientX-x)+Math.abs(ev.clientY-y)>3)moved=true;if(moved)el.classList.add('dragging');if(!frame)frame=requestAnimationFrame(paint)};
-    const stop=cancelled=>{cancelAnimationFrame(frame);paint();el.style.transform='';el.classList.remove('dragging');handle.onpointermove=null;handle.onpointerup=null;handle.onpointercancel=null;w.cancelDrag=null;if(!moved)return;w.snapped=null;if(!resize){el.style.left=Math.max(0,Math.min(innerWidth-rect.width,rect.left+last.clientX-x))+'px';el.style.top=Math.max(0,Math.min(innerHeight-108,rect.top+last.clientY-y))+'px';if(!cancelled){if(last.clientY<10)this.maximize(id);else if(last.clientX<12)this.snap(id,'left');else if(last.clientX>innerWidth-12)this.snap(id,'right')}}};
+    const stop=cancelled=>{cancelAnimationFrame(frame);paint();el.style.transform='';el.classList.remove('dragging');handle.onpointermove=null;handle.onpointerup=null;handle.onpointercancel=null;w.cancelDrag=null;if(!moved)return;this.emit();w.snapped=null;if(!resize){el.style.left=Math.max(0,Math.min(innerWidth-rect.width,rect.left+last.clientX-x))+'px';el.style.top=Math.max(0,Math.min(innerHeight-108,rect.top+last.clientY-y))+'px';if(!cancelled){if(last.clientY<10)this.maximize(id);else if(last.clientX<12)this.snap(id,'left');else if(last.clientX>innerWidth-12)this.snap(id,'right')}}};
     handle.onpointerup=()=>stop(false);handle.onpointercancel=()=>stop(true);w.cancelDrag=()=>stop(true);
    };
   };
