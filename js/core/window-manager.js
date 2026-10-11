@@ -1,5 +1,5 @@
-import{preferences,readSetting,writeSetting}from'./storage.js';
-import{icon}from'./icons.js';
+import{preferences,readSetting,writeSetting}from'./storage.js?v=1.0.1';
+import{icon}from'./icons.js?v=1.0.1';
 export class WindowManager{
  constructor(registry){
   this.registry=registry;this.windows=new Map();this.active=null;this.layer=10;this.sessionTimer=null;window.addEventListener('pagehide',()=>this.saveSession());

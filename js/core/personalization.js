@@ -1,4 +1,4 @@
-import{preferences,setPreference,readSetting,writeSetting,assetStore}from'./storage.js';
+import{preferences,setPreference,readSetting,writeSetting,assetStore}from'./storage.js?v=1.0.1';
 let wallpaperURL;
 export async function refreshWallpaper(){const el=document.querySelector('#wallpaper');if(!el)return;try{const blob=await assetStore.get('wallpaper');if(wallpaperURL)URL.revokeObjectURL(wallpaperURL);wallpaperURL=blob instanceof Blob?URL.createObjectURL(blob):null;el.style.backgroundImage=wallpaperURL?`url("${wallpaperURL}")`:'';el.classList.toggle('custom-wallpaper',!!wallpaperURL)}catch{window.dispatchEvent(new CustomEvent('emosnotice',{detail:'Kişisel duvar kâğıdı yüklenemedi.'}))}}
 export function personalize(){

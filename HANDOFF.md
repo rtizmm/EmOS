@@ -10,3 +10,6 @@ Key files: `js/main.js` app registry/shell; `js/core/window-manager.js` window/s
 Validation: `npm test`, `node --check` for every JS module, asset/import path checks. Browser QA unavailable in this environment. First manual checks: upload/reload/remove wallpaper; move/hide clock; Spotify popup behavior; scientific calculator; restore snapped/minimized windows; existing notes after IndexedDB upgrade; phone layout.
 
 No in-progress implementation is required to run v1.0. Future optional work: PWA/offline shell, backup import, tasks app. Keep user changes and existing notes intact. GitHub Pages publishes automatically after main is updated. Never overwrite a newer remote head without inspecting it.
+
+## 1.0.1 startup fix
+All browser imports and entry assets are stamped with the same release query using `python3 scripts/stamp-release.py <new-version>`. Run this for EVERY release, even if only one module changes: cached old named exports/defaults must not mix with new modules. The startup screen now includes the actual error message and retry requests a fresh HTML URL. Existing local data is preserved.
